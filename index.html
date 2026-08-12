@@ -317,31 +317,37 @@
   }
 
   // ---------- 东方财富 push2（JSONP）：上海金 / 美元指数 / 中证931743 ----------
-  // push2 单台主机偶发空响应，按主机列表轮换重试；
-  // 回调名必须以字母开头（新浪/东财都会拒绝下划线开头的 callback）
-  var EM_HOSTS=['push2.eastmoney.com','1.push2.eastmoney.com','7.push2.eastmoney.com','push2delay.eastmoney.com'];
-  function fetchEm(secid,key,attempt){
-    attempt=attempt||0;
-    if(attempt>=EM_HOSTS.length*2)return;
-    var cb='emcb'+key.replace(/[^a-zA-Z0-9]/g,'')+Date.now()+Math.floor(Math.random()*1000);
-    var done=false;
-    window[cb]=function(d){
-      done=true;
-      try{
-        if(d&&d.data&&d.data.f43!==undefined&&d.data.f43!==null&&d.data.f43!==''){
-          S[key]={p:d.data.f43, pc:(d.data.f170===undefined?0:d.data.f170), name:d.data.f58||''};
-          renderAll();
-        }
-      }catch(e){}
-      try{delete window[cb];}catch(e){window[cb]=undefined;}
-    };
-    function next(){
-      try{delete window[cb];}catch(e){window[cb]=undefined;}
-      setTimeout(function(){fetchEm(secid,key,attempt+1);},400);
-    }
-    loadJs('https://'+EM_HOSTS[attempt%EM_HOSTS.length]+'/api/qt/stock/get?secid='+secid+
-           '&fields=f43,f170,f58&fltt=2&invt=2&ut=fa5fd1943c7b386f172d6893dbfba10b&cb='+cb+'&_='+Date.now(),
-           function(){ if(!done)next(); }, null, next);
+  // 东财 push2 常有整台主机不通（实测同一时刻只有部分可用），所以首次四台并发竞速，
+  // 谁先返回就记住谁，之后只打那一台；它失效后自动清空、下次重新竞速。
+  // 回调名必须以字母开头（新浪/东财都会拒绝下划线开头的 callback）。
+  var EM_HOSTS=['push2delay.eastmoney.com','push2.eastmoney.com','1.push2.eastmoney.com','7.push2.eastmoney.com'];
+  var EM_BEST=null;
+  function fetchEm(secid,key){
+    var hosts=EM_BEST?[EM_BEST]:EM_HOSTS.slice();
+    var got=false, left=hosts.length;
+    hosts.forEach(function(h){
+      var cb='emcb'+key.replace(/[^a-zA-Z0-9]/g,'')+Math.floor(Math.random()*1e9);
+      var fin=false;
+      function finish(){
+        if(fin)return; fin=true;
+        try{delete window[cb];}catch(e){window[cb]=undefined;}
+        left--;
+        if(left<=0&&!got&&EM_BEST)EM_BEST=null; // 记住的那台已经不通了，下次重新竞速
+      }
+      window[cb]=function(d){
+        try{
+          if(d&&d.data&&d.data.f43!==undefined&&d.data.f43!==null&&d.data.f43!==''){
+            if(!got){got=true;EM_BEST=h;}
+            S[key]={p:d.data.f43, pc:(d.data.f170===undefined?0:d.data.f170), name:d.data.f58||''};
+            renderAll();
+          }
+        }catch(e){}
+        finish();
+      };
+      loadJs('https://'+h+'/api/qt/stock/get?secid='+secid+
+             '&fields=f43,f170,f58&fltt=2&invt=2&ut=fa5fd1943c7b386f172d6893dbfba10b&cb='+cb+'&_='+Date.now(),
+             finish, null, finish);
+    });
   }
 
   // ---------- 基金净值：天天基金 pingzhongdata ----------
