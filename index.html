@@ -180,6 +180,7 @@
 <li><b>关键事件：</b>① 韩国半导体专项基金落地进度；② 美国 CPI 对风险偏好影响；③ 中际旭创/新易盛等光模块股能否企稳（FCC 进口限制消息已被证伪，但机构减仓动作真实存在）。</li>
 <li><b>对持仓影响：</b>021894（半导体材料设备）短期承压（隔夜 SOX 拖累+931743 今早 -0.5%），但持仓恰好站在"多方"一侧——材料/设备受益于国产替代政策和韩国竞争催化。与存储/光通信方向的 ETF 相比，021894 的结构性优势仍然存在。关注本周能否在 SOX 利空消化后重新走强。</li>
 </ul>
+</div>
 </section>
 
 <section id="liveSec" style="display:none;border:2px solid #f49cbb;">
@@ -257,6 +258,32 @@
     if(btn)btn.addEventListener('click',tryUnlock);
     if(inp)inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();tryUnlock();}});
   })();
+
+  // ---------- 板块逻辑解读：拉取云端 routine 每工作日 08:45 重写的版本 ----------
+  // 页面一打开就拉，不依赖实时开关。文件只在 routine 跑过后才变，
+  // 所以一天内刷新多少次都是同一版（天然幂等，不需要额外判重）。
+  function loadInterp(){
+    var logicBody=document.getElementById('logicBody'),
+        logicBadge=document.getElementById('logicBadge');
+    if(!logicBody)return;
+    var s=document.createElement('script');
+    s.src='interp-latest.js?_='+Date.now();
+    s.onload=function(){
+      s.remove();
+      var D=window.DailyInterp;
+      if(!D||!D.html)return;
+      logicBody.innerHTML=D.html;
+      if(!logicBadge)return;
+      var n=new Date();
+      var today=n.getFullYear()+'-'+('0'+(n.getMonth()+1)).slice(-2)+'-'+('0'+n.getDate()).slice(-2);
+      logicBadge.innerHTML=(D.date===today)
+        ? '（今日 '+(D.generatedAt||D.date)+' 生成）'
+        : '<span style="color:#c9407a">（来自 '+D.date+'，今日尚未生成）</span>';
+    };
+    s.onerror=function(){s.remove();};
+    document.head.appendChild(s);
+  }
+  loadInterp();
 
   function nowStr(){var d=new Date();return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);}
   function num(v){var n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?0:n;}
