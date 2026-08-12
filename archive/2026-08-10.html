@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+</style>
+<title>每日早盘简报 · 2026-08-10（周一）· 为Rui定制</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; background: #f7f6f8; color: #2c2730; line-height: 1.75; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 14px 48px; }
+  header.topbar { background: linear-gradient(135deg, #e8638c, #f49cbb); color: #fff; padding: 26px 20px 22px; border-radius: 0 0 18px 18px; box-shadow: 0 4px 18px rgba(232,99,140,.25); }
+  .hd-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  header.topbar h1 { font-size: 22px; font-weight: 700; letter-spacing: .5px; }
+  .cute { font-size: 13px; font-weight: 600; color: #fff; background: rgba(255,255,255,.25); border: 1px solid rgba(255,255,255,.55); border-radius: 999px; padding: 2px 12px; margin-left: 10px; letter-spacing: .5px; white-space: nowrap; vertical-align: middle; }
+  header.topbar .sub { margin-top: 6px; font-size: 13px; opacity: .92; }
+  header.topbar .tags { margin-top: 10px; }
+  header.topbar .tag { display: inline-block; background: rgba(255,255,255,.22); border-radius: 999px; padding: 2px 12px; font-size: 12px; margin: 3px 6px 0 0; }
+  .live-ctl { display: flex; align-items: center; gap: 8px; padding-top: 4px; }
+  .live-label { font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .switch { position: relative; width: 52px; height: 30px; flex-shrink: 0; cursor: pointer; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; inset: 0; background: rgba(255,255,255,.45); border-radius: 999px; transition: .25s; box-shadow: inset 0 1px 3px rgba(0,0,0,.18); }
+  .slider:before { content: ""; position: absolute; width: 24px; height: 24px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .25s; box-shadow: 0 2px 5px rgba(0,0,0,.25); }
+  .switch input:checked + .slider { background: #2ecc71; }
+  .switch input:checked + .slider:before { transform: translateX(22px); }
+  .live-status { font-size: 12px; white-space: nowrap; vertical-align: middle; }
+  .live-status.on { background: rgba(46,204,113,.28); }
+  section { background: #fff; border-radius: 14px; padding: 18px 20px; margin-top: 16px; box-shadow: 0 2px 10px rgba(60,40,60,.05); }
+  h2 { font-size: 17px; font-weight: 700; color: #c9407a; margin-bottom: 10px; padding-left: 10px; border-left: 4px solid #f49cbb; }
+  h3 { font-size: 15px; color: #444; margin: 14px 0 6px; }
+  .up { color: #d4303a; font-weight: 600; }
+  .down { color: #1a9e4b; font-weight: 600; }
+  .flat { color: #888; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 8px; }
+  th, td { padding: 8px 8px; text-align: left; border-bottom: 1px solid #f0ecf1; vertical-align: top; }
+  th { color: #998fa0; font-weight: 600; font-size: 12.5px; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  .note { font-size: 12px; color: #a39aa9; margin-top: 10px; }
+  .muted { color: #8d8593; font-size: 13px; }
+  details summary { cursor: pointer; list-style: none; outline: none; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary .sumrow { display: flex; align-items: flex-start; gap: 8px; }
+  details summary .arrow { color: #e8638c; font-size: 13px; margin-top: 3px; transition: transform .2s; flex-shrink: 0; }
+  details[open] summary .arrow { transform: rotate(90deg); }
+  details summary h2 { margin-bottom: 0; flex-shrink: 0; }
+  details summary .gist { font-size: 13px; color: #8d8593; margin-top: 3px; }
+  details .inner { margin-top: 12px; }
+  .point { padding: 10px 12px; background: #fdf6f9; border-radius: 10px; margin-top: 10px; font-size: 14px; }
+  .point b { color: #c9407a; }
+  .news-item { padding: 10px 0; border-bottom: 1px dashed #eee5ec; font-size: 14px; }
+  .news-item:last-child { border-bottom: none; }
+  .news-item .t { font-weight: 600; }
+  .news-item .s { color: #6f6875; margin-top: 3px; }
+  .news-item .src { font-size: 12px; color: #a39aa9; margin-top: 3px; }
+  .news-item .src a { color: #e8638c; text-decoration: none; word-break: break-all; }
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 8px; }
+  .card { background: #fdf6f9; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; }
+  .card .k { color: #998fa0; font-size: 12px; }
+  .card .v { font-size: 17px; font-weight: 700; margin-top: 2px; }
+  ul.logic { padding-left: 20px; font-size: 14px; }
+  ul.logic li { margin-top: 8px; }
+  footer { text-align: center; color: #b6adb9; font-size: 12px; margin-top: 22px; }
+  @media (max-width: 640px) { th, td { padding: 6px 5px; font-size: 12.5px; } header.topbar h1 { font-size: 19px; } .cute { font-size: 11.5px; padding: 1px 9px; margin-left: 6px; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="hd-row">
+    <div>
+      <h1>✨ 每日早盘简报 · <span id="briefDate">2026-08-10（周一）</span><span class="cute">为 Rui 定制</span></h1>
+      <div class="sub"><span id="subDate">早报数据截至今晨 09:30</span> ｜ <span id="liveStatus" class="live-status">○ 早报模式快照</span> ｜ 打开右侧开关 → 随时抓取实时行情</div>
+    </div>
+    <div class="live-ctl">
+      <span class="live-label">实时更新</span>
+      <label class="switch" title="打开后自动抓取最新行情">
+        <input type="checkbox" id="liveToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+  <div class="tags">
+    <span class="tag">周五非农爆冷 -2.3万</span>
+    <span class="tag">9月加息概率降至44%</span>
+    <span class="tag">黄金周涨7.44%</span>
+    <span class="tag">SOX周涨9.25%</span>
+  </div>
+</header>
+<div class="wrap">
+
+<!-- 一、持仓基金盯盘（默认折叠） -->
+<section>
+<details>
+  <summary>
+    <div class="sumrow">
+      <span class="arrow">▶</span>
+      <div>
+        <h2>📊 持仓基金盯盘</h2>
+        <div class="gist">这个周末过得很舒服——周五非农爆冷引爆黄金与美股，已披露净值全线收红，今早金价还在往上走</div>
+      </div>
+    </div>
+  </summary>
+  <div class="inner">
+    <table>
+      <tr><th>持仓</th><th>最新净值（日期）</th><th>日涨跌</th><th>跟踪标的最近表现</th></tr>
+      <tr>
+        <td>006479 广发纳斯达克100ETF联接(QDII)C</td>
+        <td data-fundnav="006479">8.0054（8/6）</td>
+        <td class="down" data-fundpct="006479">-0.39%</td>
+        <td data-fundref="006479">QDII 净值滞后两日。<span class="up">前瞻参考：隔夜（周五）纳指100 +1.19%</span> 收 29,722.30，下一期净值大概率补涨</td>
+      </tr>
+      <tr>
+        <td>000217 华安黄金ETF联接C</td>
+        <td data-fundnav="000217">3.1313（8/7）</td>
+        <td class="up" data-fundpct="000217">+0.50%</td>
+        <td data-fundref="000217">Au99.99 今早 936.08 元/克 <span class="up">+0.60%</span>（09:30），周一净值继续受益</td>
+      </tr>
+      <tr>
+        <td>008702 华夏黄金ETF联接C</td>
+        <td data-fundnav="008702">2.0075（8/7）</td>
+        <td class="up" data-fundpct="008702">+0.50%</td>
+        <td data-fundref="008702">同上，跟踪 Au99.99；伦敦金上周累计大涨 7.44%</td>
+      </tr>
+      <tr>
+        <td>008987 广发上海金ETF联接C</td>
+        <td data-fundnav="008987">1.9591（8/7）</td>
+        <td class="up" data-fundpct="008987">+0.95%</td>
+        <td data-fundref="008987">跟踪上海金（SHAU）；沪金主力今早报约 941.7 元/克，工行纸黄金 941.86</td>
+      </tr>
+      <tr>
+        <td>积存金（银行）</td>
+        <td colspan="2">参考价约 <span class="up">938–942 元/克</span>（8/10 早）</td>
+        <td data-fundref="cunyijin">上金所 Au99.99 936–938 元/克；银行投资金条 948–962 元/克（工行如意金条约 959–962、建行约 959、中行约 958.8）；足金回收参考价约 926 元/克</td>
+      </tr>
+      <tr>
+        <td>021894 易方达中证半导体材料设备ETF联接C</td>
+        <td data-fundnav="021894">2.5539（8/7）</td>
+        <td class="up" data-fundpct="021894">+2.65%</td>
+        <td data-fundref="021894">931865 周五收 8,814.05 <span class="up">+2.46%</span>；今早半导体材料设备延续强势（场内材料设备ETF +1.4%~1.8%）</td>
+      </tr>
+      <tr>
+        <td>025500 东方阿尔法科技智选混合C</td>
+        <td data-fundnav="025500">1.6435（8/7）</td>
+        <td class="up" data-fundpct="025500">+4.37%</td>
+        <td data-fundref="025500">主动科技基金，重仓方向与半导体/算力高相关，周五随 A股科技大涨；近一周回报 +9.06%</td>
+      </tr>
+    </table>
+    <div class="note">* 实时模式下净值更新为基金公司最新官方披露（天天基金数据源），盘中"跟踪标的"列为实时行情参考；场外基金无盘中估值，最终涨跌以晚间披露为准。QDII（006479）因时差净值披露滞后。</div>
+  </div>
+</details>
+</section>
+
+<!-- 二、今日走势归因 -->
+<section>
+  <h2>🧭 今日走势归因</h2>
+  <div class="point"><b>① 周五非农爆冷（-2.3万）→ 加息预期大降温 → 你的美股和黄金仓位同时受益。</b>美国 7 月非农就业不增反减 2.3 万个（预期 +8 万），5、6 月合计下修 10.3 万，为罕见的月度负增长（来源：中新社、新华财经）。芝商所 FedWatch 显示 9 月加息 25bp 概率从 55% 骤降至 44.1%，维持不变概率升至 55.9%。数据公布后美股期指直线拉升（纳指100 收涨 +1.19%）、美元指数跳水、黄金白银暴涨——直接对应 006479 的前瞻利好与三只黄金基金 8/7 净值的全面收红。</div>
+  <div class="point"><b>② 美伊局势继续降温 + 油价回落 → 通胀压力缓解，进一步强化"不加息"叙事。</b>特朗普 8/9 表示正"低调处理"伊朗问题、倾向加大经济施压而非军事行动；伊朗议会则批准了霍尔木兹海峡安全战略纲要（来源：央视新闻、中新经纬）。今早 WTI 仅小幅高开 +0.67% 报 78.7 美元。市场普遍解读为：油价—金价的"跷跷板"延续，避险与宽松预期双轮驱动黄金，上周伦敦金累计 +7.44%、突破 4000–4100 盘整区间。</div>
+  <div class="point"><b>③ 半导体：全球板块共振修复，但内部"材料设备强、存储弱"分化明显 → 利好 021894。</b>费城半导体指数周五 +2.56% 收 12,356.79，周涨 9.25%，微芯科技涨超 11%，英特尔/安森美/阿斯麦涨超 3%（来源：同花顺 iFinD、格隆汇）。存储链继续承压（西部数据上周跌 13%、闪迪跌近 7%）。今早 A股半导体材料设备方向延续强势：先导基电 +8.7%、有研新材 +7.56%、天岳先进 +6.44%，而朗科科技 -13.55% 跟跌存储——021894 跟踪的材料设备指数恰好站在强的一侧。</div>
+  <div class="point"><b>④ 短期提示（中性）。</b>机构普遍把本轮金价上涨定义为"加息预期消退驱动的阶段性修复"而非趋势性牛市（东方金诚、国金期货观点）；非农虽冷但失业率降至 4.1%（主因劳动参与率下滑），"软着陆"叙事未被证伪。后续通胀数据与美联储官员表态仍是关键验证点，仓位感受好不等于追高理由。</div>
+</section>
+
+<!-- 三、三大板块深度行情 -->
+<section>
+  <h2>🌐 三大板块深度行情</h2>
+  <h3>1）纳斯达克（8/7 周五收盘）</h3>
+  <div class="grid3">
+    <div class="card"><div class="k">纳斯达克100 NDX</div><div class="v up" data-lv="NDX">29,722.30 <span style="font-size:13px">+1.19%</span></div></div>
+    <div class="card"><div class="k">纳斯达克综合 IXIC</div><div class="v up" data-lv="IXIC">26,690.62 <span style="font-size:13px">+1.30%</span></div></div>
+    <div class="card"><div class="k">美元指数 DXY（今晨）</div><div class="v">99.66 <span style="font-size:13px" class="flat">+0.06%</span></div></div>
+  </div>
+  <table>
+    <tr><th>权重股</th><th>收盘价（美元）</th><th>日涨跌</th><th>备注</th></tr>
+    <tr><td>英伟达 NVDA</td><td data-lv="NVDA">223.96</td><td class="up" data-lv="NVDAp">+2.27%</td><td>非农后 risk-on 领涨七巨头</td></tr>
+    <tr><td>苹果 AAPL</td><td data-lv="AAPL">313.33</td><td class="up" data-lv="AAPLp">+0.29%</td><td>窄幅整理</td></tr>
+    <tr><td>微软 MSFT</td><td data-lv="MSFT">499.99</td><td class="up" data-lv="MSFTp">+0.03%</td><td>平收，守着 500 关口</td></tr>
+  </table>
+  <h3>2）黄金</h3>
+  <table>
+    <tr><th>品种</th><th>最新价</th><th>涨跌</th><th>口径</th></tr>
+    <tr><td>COMEX 黄金期货</td><td data-lv="GC">4,385.50 美元/盎司</td><td class="down" data-lv="GCp">-0.32%</td><td>早报口径：周日夜盘电子盘（周五收 4,399.70，单日 +2.35%）</td></tr>
+    <tr><td>人民币金价估算</td><td data-lv="CNYAU">≈951 元/克</td><td class="down" data-lv="CNYAUp">-0.32%</td><td>COMEX × 在岸汇率 ÷ 31.1035 折算，未含境内外价差，仅供盘中参考</td></tr>
+    <tr><td>伦敦金现货</td><td>4,316.54 美元/盎司</td><td class="down">-0.58%</td><td>今晨 09:29（金投网），早间曾站上 4,350 后回落；上周累计 +7.44%</td></tr>
+    <tr><td>Au99.99（上金所）</td><td>936.08 元/克</td><td class="up">+0.60%</td><td>今晨 09:30，昨结 930.47</td></tr>
+    <tr><td>美元指数</td><td>99.66</td><td class="up">+0.06%</td><td>周五跳水收 99.60 后今晨小幅企稳</td></tr>
+  </table>
+  <h3>3）半导体</h3>
+  <div class="grid3">
+    <div class="card"><div class="k">费城半导体 SOX（8/7）· SMH代理可实时</div><div class="v up" data-lv="SOX">12,356.79 <span style="font-size:13px">+2.56%</span></div><div class="muted" style="font-size:12px">周涨 9.25%（同花顺 iFinD）</div></div>
+    <div class="card"><div class="k">中证半导 931865（8/7）</div><div class="v up">8,814.05 <span style="font-size:13px">+2.46%</span></div></div>
+    <div class="card"><div class="k">上证指数</div><div class="v up" data-lv="SHI">3,940.04 <span style="font-size:13px">+1.02%</span></div></div>
+  </div>
+  <table>
+    <tr><th>A股半导体个股</th><th>涨跌幅</th></tr>
+    <tr><td>先导基电（设备）</td><td class="up" data-lv="XDJD">+8.70%</td></tr>
+    <tr><td>有研新材（材料）</td><td class="up" data-lv="YYXC">+7.56%</td></tr>
+    <tr><td>天岳先进（衬底材料）</td><td class="up" data-lv="TYXJ">+6.44%</td></tr>
+    <tr><td>中芯国际</td><td class="down" data-lv="SMIC">-0.47%</td></tr>
+    <tr><td>寒武纪</td><td class="down" data-lv="HWJ">-0.84%</td></tr>
+    <tr><td>朗科科技（存储）</td><td class="down" data-lv="LK">-13.55%</td></tr>
+  </table>
+  <div class="note" data-lv="ETFnote">半导体设备概念板块今早 +0.43%，场内半导体材料设备 ETF 普涨 1.4%~1.8%；板块主力资金今早小幅净流出，属高开后的分化消化。</div>
+</section>
+
+<!-- 四、隔夜要闻摘要 -->
+<section>
+  <h2>📰 隔夜/周末要闻摘要</h2>
+  <div class="news-item">
+    <div class="t">美国 7 月非农就业意外减少 2.3 万，前两月合计下修 10.3 万</div>
+    <div class="s">7 月非农为近期罕见月度负增长，远低于预期的 +8 万；失业率降至 4.1% 但主因劳动参与率跌至 61.4%（26.4 万人退出劳动力市场）。数据公布后 9 月加息概率由 55% 降至 44.1%，美债收益率快速走低。</div>
+    <div class="src">来源：新华财经｜<a href="https://www.cnfin.com/hs-lb/detail/20260807/4452500_1.html">cnfin.com/hs-lb/detail/20260807/4452500_1.html</a></div>
+  </div>
+  <div class="news-item">
+    <div class="t">非农引爆全球市场：美股拉升、黄金白银暴涨、美元跳水</div>
+    <div class="s">8/7 晚间欧美股市直线上涨，黄金、白银价格暴涨，美元指数直线跳水。疲软就业报告缓解了美联储主席沃什面临的加息压力，分析师称劳动力市场"整体趋势明显比此前认为的冷得多"。</div>
+    <div class="src">来源：中国基金报｜<a href="https://finance.sina.com.cn/jjxw/2026-08-07/doc-inimnzsc3183035.shtml">finance.sina.com.cn/jjxw/2026-08-07/doc-inimnzsc3183035.shtml</a></div>
+  </div>
+  <div class="news-item">
+    <div class="t">特朗普称正"低调处理"伊朗问题，倾向经济施压而非军事行动</div>
+    <div class="s">美方 8/9 释放缓和信号；伊朗议会国家安全委员会同日批准确保霍尔木兹海峡安全与发展的战略行动计划纲要，革命卫队称将保持对海峡控制"直至敌方接受全部条件"。今早国际油价小幅高开，WTI +0.67% 报 78.7 美元。</div>
+    <div class="src">来源：中新经纬/济报鲁中（援引央视新闻）｜<a href="https://www.toutiao.com/article/7672187362801091118/">toutiao.com/article/7672187362801091118</a></div>
+  </div>
+  <div class="news-item">
+    <div class="t">金价一周大涨 7.44%，国内足金首饰重返 1300 元/克上方</div>
+    <div class="s">伦敦金上周突破 4300 美元关口、站上 4400，创 2 月初以来最大周度涨幅；今早周生生足金挂牌 1315 元/克，周大福/老庙等站上 1308–1310。机构普遍认为本轮为"加息预期消退 + 美伊缓和"驱动的阶段性修复，尚非趋势性牛市。</div>
+    <div class="src">来源：腾讯新闻｜<a href="https://new.qq.com/rain/a/20260810A02RTJ00">new.qq.com/rain/a/20260810A02RTJ00</a></div>
+  </div>
+  <div class="news-item">
+    <div class="t">费城半导体指数周五 +2.56% 收 12,356.79，周涨 9.25%；存储链持续承压</div>
+    <div class="s">微芯科技涨超 11%，英特尔、安森美、阿斯麦涨超 3%；但高盛提示存储行业"预期已过度领先于现实"，西部数据、闪迪上周双双大跌，今早 A股存储股朗科科技 -13.55% 跟跌。</div>
+    <div class="src">来源：同花顺 iFinD｜<a href="https://m.10jqka.com.cn/20260808/c678777925.shtml">m.10jqka.com.cn/20260808/c678777925.shtml</a></div>
+  </div>
+</section>
+
+<!-- 五、板块逻辑解读 -->
+<section>
+  <h2>💡 板块逻辑解读</h2>
+  <ul class="logic">
+    <li><b>纳斯达克：</b>非农爆冷把"9 月再加一次息"的定价基本打掉，成长股折现率压力骤减，周五 NDX +1.19% 收复前一日跌幅。短期驱动从"利率恐慌"切回"盈利与 AI 资本开支验证"，微软守在 500 关口、英伟达弹性最大。对 006479：隔夜 +1.19% 会在下一期净值中兑现，前瞻偏暖；但若后续通胀数据反复，加息叙事仍可能回摆，中性看待。</li>
+    <li><b>黄金：</b>本轮是"就业走弱 → 加息预期消退 → 美元跳水 → 金价修复"的经典链条，叠加美伊缓和下的避险再定价，一周 +7.44% 已计入相当多利好。今早伦敦金自 4350 回落、COMEX 电子盘微跌，显示 4400 上方有获利了结。国内 Au99.99 今早仍 +0.60%，周一黄金基金净值继续受益，但机构共识是"阶段性修复、非趋势牛市"，短期中性偏强、追高性价比一般。</li>
+    <li><b>半导体：</b>全球共振修复中结构分化是主线：功率/设备/材料（微芯、英特尔、阿斯麦 ↔ 先导基电、有研新材、天岳先进）强势，存储链因"预期领先现实"持续杀估值。021894 跟踪的材料设备指数处于强势侧，今早场内相关 ETF 普涨 1.4%~1.8%，情绪延续；需留意 A股半导体板块主力今早小幅净流出，高开后分化和波动可能加大，短期中性提示。</li>
+  </ul>
+</section>
+
+<footer>阿布 ✨ 每日早盘简报 · 为 Rui 定制 · 数据来自 NeoData、腾讯行情、天天基金与公开新闻检索，仅供参考，不构成投资建议<br>涨=红 / 跌=绿（国内习惯）· 早报生成于 2026-08-10 09:30，打开顶部开关可获取实时行情</footer>
+</div>
+
+<script>
+(function () {
+  var toggle = document.getElementById('liveToggle');
+  var statusEl = document.getElementById('liveStatus');
+  var timer = null, busy = false, originals = null;
+
+  var QT_CODES = 'sh000001,sz159558,usNDX,usIXIC,usNVDA,usAAPL,usMSFT,usSMH,hf_GC,whUSDCNY,sh600641,sh600206,sh688234,sh688981,sh688256,sz300042';
+  var FUNDS = ['006479', '000217', '008702', '008987', '021894', '025500'];
+
+  function sgn(p) { return (p > 0 ? '+' : '') + (+p).toFixed(2) + '%'; }
+  function cls(p) { return p > 0 ? 'up' : (p < 0 ? 'down' : 'flat'); }
+  function num(x, d) { return (+x).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+
+  function loadScript(src, charset, cb) {
+    var s = document.createElement('script');
+    s.src = src; if (charset) s.charset = charset;
+    var done = false;
+    function fin() { if (!done) { done = true; cb(); } if (s.parentNode) s.parentNode.removeChild(s); }
+    s.onload = fin; s.onerror = fin;
+    document.body.appendChild(s);
+    setTimeout(fin, 12000);
+  }
+
+  function parseQT(code) {
+    var raw = window['v_' + code];
+    if (!raw) return null;
+    if (code.indexOf('hf_') === 0) { var c = raw.split(','); return { price: +c[0], pct: +c[1] }; }
+    var f = raw.split('~');
+    if (code.indexOf('wh') === 0) { return { price: +f[3], pct: +f[13] }; }
+    return { price: +f[3], pct: +f[32] };
+  }
+
+  function setEl(key, html, colorCls) {
+    var els = document.querySelectorAll('[data-lv="' + key + '"]');
+    for (var i = 0; i < els.length; i++) {
+      els[i].innerHTML = html;
+      els[i].classList.remove('up', 'down', 'flat');
+      if (colorCls) els[i].classList.add(colorCls);
+    }
+  }
+
+  function applyQuotes() {
+    var q = {};
+    var codes = QT_CODES.split(',');
+    for (var i = 0; i < codes.length; i++) q[codes[i]] = parseQT(codes[i]);
+    if (!q.sh000001 && !q.usNDX) return false;
+
+    if (q.usNDX) setEl('NDX', num(q.usNDX.price, 2) + ' <span style="font-size:13px">' + sgn(q.usNDX.pct) + '</span>', cls(q.usNDX.pct));
+    if (q.usIXIC) setEl('IXIC', num(q.usIXIC.price, 2) + ' <span style="font-size:13px">' + sgn(q.usIXIC.pct) + '</span>', cls(q.usIXIC.pct));
+    if (q.usNVDA) { setEl('NVDA', num(q.usNVDA.price, 2)); setEl('NVDAp', sgn(q.usNVDA.pct), cls(q.usNVDA.pct)); }
+    if (q.usAAPL) { setEl('AAPL', num(q.usAAPL.price, 2)); setEl('AAPLp', sgn(q.usAAPL.pct), cls(q.usAAPL.pct)); }
+    if (q.usMSFT) { setEl('MSFT', num(q.usMSFT.price, 2)); setEl('MSFTp', sgn(q.usMSFT.pct), cls(q.usMSFT.pct)); }
+    if (q.usSMH) setEl('SOX', num(q.usSMH.price, 2) + ' <span style="font-size:13px">' + sgn(q.usSMH.pct) + '</span> <span style="font-size:11px;color:#a39aa9">SMH实时</span>', cls(q.usSMH.pct));
+    if (q.sh000001) setEl('SHI', num(q.sh000001.price, 2) + ' <span style="font-size:13px">' + sgn(q.sh000001.pct) + '</span>', cls(q.sh000001.pct));
+    if (q.hf_GC) {
+      setEl('GC', num(q.hf_GC.price, 1) + ' 美元/盎司');
+      setEl('GCp', sgn(q.hf_GC.pct), cls(q.hf_GC.pct));
+      if (q.whUSDCNY) {
+        var cny = q.hf_GC.price * q.whUSDCNY.price / 31.1035;
+        setEl('CNYAU', '≈' + num(cny, 1) + ' 元/克');
+        setEl('CNYAUp', sgn(q.hf_GC.pct), cls(q.hf_GC.pct));
+      }
+    }
+    if (q.sh600641) setEl('XDJD', sgn(q.sh600641.pct), cls(q.sh600641.pct));
+    if (q.sh600206) setEl('YYXC', sgn(q.sh600206.pct), cls(q.sh600206.pct));
+    if (q.sh688234) setEl('TYXJ', sgn(q.sh688234.pct), cls(q.sh688234.pct));
+    if (q.sh688981) setEl('SMIC', sgn(q.sh688981.pct), cls(q.sh688981.pct));
+    if (q.sh688256) setEl('HWJ', sgn(q.sh688256.pct), cls(q.sh688256.pct));
+    if (q.sz300042) setEl('LK', sgn(q.sz300042.pct), cls(q.sz300042.pct));
+    if (q.sz159558) setEl('ETFnote', '半导体设备ETF（159558，021894 标的）实时 ' + sgn(q.sz159558.pct) + '，报 ' + num(q.sz159558.price, 3) + ' 元；板块主力资金动向以盘后复盘为准。');
+
+    // 持仓表"跟踪标的"列
+    if (q.usNDX) setRef('006479', 'QDII 净值滞后两日。<span class="' + cls(q.usNDX.pct) + '">前瞻参考：纳指100 实时 ' + sgn(q.usNDX.pct) + '</span>（' + num(q.usNDX.price, 2) + '）');
+    if (q.hf_GC && q.whUSDCNY) {
+      var g = '≈' + num(q.hf_GC.price * q.whUSDCNY.price / 31.1035, 1) + ' 元/克';
+      setRef('000217', '人民币金价估算 ' + g + '（COMEX <span class="' + cls(q.hf_GC.pct) + '">' + sgn(q.hf_GC.pct) + '</span> × 在岸汇率折算）；晚间净值以上金所 Au99.99 结算为准');
+      setRef('008702', '同上，跟踪 Au99.99；人民币金价估算 ' + g);
+      setRef('008987', '跟踪上海金（SHAU）；人民币金价估算 ' + g + '，未含境内外价差');
+      setRef('cunyijin', '积存金实时参考：人民币金价估算 ' + g + '（COMEX × 汇率折算）；银行实际挂牌以各行为准，通常为基础价 +10~25 元/克');
+    }
+    if (q.sz159558) setRef('021894', '<span class="' + cls(q.sz159558.pct) + '">标的ETF（159558）实时 ' + sgn(q.sz159558.pct) + '</span> 报 ' + num(q.sz159558.price, 3) + ' 元；场外基金晚间按指数收盘价确认净值');
+    setRef('025500', '主动管理基金无盘中估值，以晚间官方披露净值为准；重仓方向与半导体/算力高相关');
+    return true;
+  }
+
+  function setRef(code, html) {
+    var els = document.querySelectorAll('[data-fundref="' + code + '"]');
+    for (var i = 0; i < els.length; i++) els[i].innerHTML = html;
+  }
+
+  function applyFund(code) {
+    var trend = window.Data_netWorthTrend;
+    if (!trend || !trend.length) return;
+    var last = trend[trend.length - 1];
+    var d = new Date(last.x);
+    var dateStr = (d.getMonth() + 1) + '/' + d.getDate();
+    var navEl = document.querySelector('[data-fundnav="' + code + '"]');
+    var pctEl = document.querySelector('[data-fundpct="' + code + '"]');
+    if (navEl) navEl.textContent = (+last.y).toFixed(4) + '（' + dateStr + '）';
+    if (pctEl) {
+      pctEl.textContent = sgn(last.equityReturn);
+      pctEl.classList.remove('up', 'down', 'flat');
+      pctEl.classList.add(cls(last.equityReturn));
+    }
+  }
+
+  function fetchAll(cb) {
+    if (busy) return;
+    busy = true;
+    statusEl.textContent = '⟳ 正在拉取实时行情…';
+    var ts = Date.now();
+    loadScript('https://qt.gtimg.cn/q=' + QT_CODES + '&_t=' + ts, 'gbk', function () {
+      applyQuotes();
+      var i = 0;
+      function next() {
+        if (i >= FUNDS.length) {
+          busy = false;
+          var now = new Date();
+          var t = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2) + ':' + ('0' + now.getSeconds()).slice(-2);
+          lastUpdateTime = t;
+          statusEl.textContent = '● 实时模式 · 更新于 ' + t + ' · 每 30 秒自动刷新';
+          subDateEl.textContent = '📡 实时拉取中 · 每 30 秒刷新数字 · 解读为本期早报';
+          if (cb) cb();
+          return;
+        }
+        var code = FUNDS[i++];
+        loadScript('https://fund.eastmoney.com/pingzhongdata/' + code + '.js?_t=' + ts, null, function () {
+          applyFund(code);
+          window.Data_netWorthTrend = null;
+          next();
+        });
+      }
+      next();
+    });
+  }
+
+  function snapshotOriginals() {
+    originals = [];
+    var els = document.querySelectorAll('[data-lv],[data-fundnav],[data-fundpct],[data-fundref]');
+    for (var i = 0; i < els.length; i++) originals.push([els[i], els[i].innerHTML, els[i].className]);
+  }
+  function restoreOriginals() {
+    if (!originals) return;
+    for (var i = 0; i < originals.length; i++) {
+      originals[i][0].innerHTML = originals[i][1];
+      originals[i][0].className = originals[i][2];
+    }
+  }
+
+  var dateEl = document.getElementById('briefDate');
+  var subDateEl = document.getElementById('subDate');
+  var SNAPSHOT_DATE = '2026-08-10（周一）';
+  var SNAPSHOT_SUB = '早报数据截至今晨 09:30';
+  var WEEKDAYS = ['周日','周一','周二','周三','周四','周五','周六'];
+  function todayStr() {
+    var d = new Date();
+    var m = ('0' + (d.getMonth() + 1)).slice(-2);
+    var day = ('0' + d.getDate()).slice(-2);
+    return d.getFullYear() + '-' + m + '-' + day + '（' + WEEKDAYS[d.getDay()] + '）';
+  }
+  var lastUpdateTime = '';
+  function nowStr() {
+    var d = new Date();
+    return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);
+  }
+  toggle.addEventListener('change', function () {
+    if (toggle.checked) {
+      statusEl.classList.add('on');
+      subDateEl.textContent = '📡 实时拉取中 · 每 30 秒刷新数字 · 解读为本期早报';
+      fetchAll();
+      timer = setInterval(fetchAll, 30000);
+    } else {
+      if (timer) { clearInterval(timer); timer = null; }
+      statusEl.classList.remove('on');
+      statusEl.textContent = lastUpdateTime ? ('○ 静态模式 · 数据定格于 ' + lastUpdateTime) : '○ 早报快照（未拉取过实时数据）';
+      subDateEl.textContent = lastUpdateTime
+        ? ('📊 数据定格于 ' + lastUpdateTime + ' · 解读为本期早报（数字已停止刷新）')
+        : '早报数据截至今晨 09:30';
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; background: #f7f6f8; color: #2c2730; line-height: 1.75; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 14px 48px; }
+  header.topbar { background: linear-gradient(135deg, #e8638c, #f49cbb); color: #fff; padding: 26px 20px 22px; border-radius: 0 0 18px 18px; box-shadow: 0 4px 18px rgba(232,99,140,.25); }
+  .hd-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  header.topbar h1 { font-size: 22px; font-weight: 700; letter-spacing: .5px; }
+  .cute { font-size: 13px; font-weight: 600; color: #fff; background: rgba(255,255,255,.25); border: 1px solid rgba(255,255,255,.55); border-radius: 999px; padding: 2px 12px; margin-left: 10px; letter-spacing: .5px; white-space: nowrap; vertical-align: middle; }
+  header.topbar .sub { margin-top: 6px; font-size: 13px; opacity: .92; }
+  header.topbar .tags { margin-top: 10px; }
+  header.topbar .tag { display: inline-block; background: rgba(255,255,255,.22); border-radius: 999px; padding: 2px 12px; font-size: 12px; margin: 3px 6px 0 0; }
+  .live-ctl { display: flex; align-items: center; gap: 8px; padding-top: 4px; }
+  .live-label { font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .switch { position: relative; width: 52px; height: 30px; flex-shrink: 0; cursor: pointer; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; inset: 0; background: rgba(255,255,255,.45); border-radius: 999px; transition: .25s; box-shadow: inset 0 1px 3px rgba(0,0,0,.18); }
+  .slider:before { content: ""; position: absolute; width: 24px; height: 24px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .25s; box-shadow: 0 2px 5px rgba(0,0,0,.25); }
+  .switch input:checked + .slider { background: #2ecc71; }
+  .switch input:checked + .slider:before { transform: translateX(22px); }
+  .live-status { font-size: 12px; white-space: nowrap; vertical-align: middle; }
+  section { background: #fff; border-radius: 14px; padding: 18px 20px; margin-top: 16px; box-shadow: 0 2px 10px rgba(60,40,60,.05); }
+  h2 { font-size: 17px; font-weight: 700; color: #c9407a; margin-bottom: 10px; padding-left: 10px; border-left: 4px solid #f49cbb; }
+  h3 { font-size: 15px; color: #444; margin: 14px 0 6px; }
+  .up { color: #d4303a; font-weight: 600; }
+  .down { color: #1a9e4b; font-weight: 600; }
+  .flat { color: #888; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 8px; }
+  th, td { padding: 8px 8px; text-align: left; border-bottom: 1px solid #f0ecf1; vertical-align: top; }
+  th { color: #998fa0; font-weight: 600; font-size: 12.5px; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  .note { font-size: 12px; color: #a39aa9; margin-top: 10px; }
+  details summary { cursor: pointer; list-style: none; outline: none; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary .sumrow { display: flex; align-items: flex-start; gap: 8px; }
+  details summary .arrow { color: #e8638c; font-size: 13px; margin-top: 3px; transition: transform .2s; flex-shrink: 0; }
+  details[open] summary .arrow { transform: rotate(90deg); }
+  details summary h2 { margin-bottom: 0; flex-shrink: 0; }
+  details summary .gist { font-size: 13px; color: #8d8593; margin-top: 3px; }
+  details .inner { margin-top: 12px; }
+  .point { padding: 10px 12px; background: #fdf6f9; border-radius: 10px; margin-top: 10px; font-size: 14px; }
+  .point b { color: #c9407a; }
+  .news-item { padding: 10px 0; border-bottom: 1px dashed #eee5ec; font-size: 14px; }
+  .news-item:last-child { border-bottom: none; }
+  .news-item .t { font-weight: 600; }
+  .news-item .s { color: #6f6875; margin-top: 3px; }
+  .news-item .src { font-size: 12px; color: #a39aa9; margin-top: 3px; }
+  .news-item .src a { color: #e8638c; text-decoration: none; word-break: break-all; }
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 8px; }
+  .card { background: #fdf6f9; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; }
+  .card .k { color: #998fa0; font-size: 12px; }
+  .card .v { font-size: 17px; font-weight: 700; margin-top: 2px; }
+  ul.logic { padding-left: 20px; font-size: 14px; }
+  ul.logic li { margin-top: 8px; }
+  footer { text-align: center; color: #b6adb9; font-size: 12px; margin-top: 22px; }
+  @media (max-width: 640px) { th, td { padding: 6px 5px; font-size: 12.5px; } header.topbar h1 { font-size: 19px; } .cute { font-size: 11.5px; padding: 1px 9px; margin-left: 6px; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="hd-row">
+    <div>
+      <h1>✨ 每日早盘简报 · <span id="briefDate">2026-08-11（周二）</span><span class="cute">为 Rui 定制</span></h1>
+      <div class="sub"><span id="subDate">早报数据截至今晨 09:30</span> ｜ <span id="liveStatus" class="live-status">○ 早报模式快照</span> ｜ 打开右侧开关 → 实时刷新行情与解读文字</div>
+    </div>
+    <div class="live-ctl">
+      <span class="live-label">实时更新</span>
+      <label class="switch" title="打开后自动抓取最新行情">
+        <input type="checkbox" id="liveToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+  <div class="tags">
+    <span class="tag">金价突破4400美元</span>
+    <span class="tag">美伊谈判蒙阴影·油价+5%</span>
+    <span class="tag">费半-2.94%全线走低</span>
+    <span class="tag">A股低开回升·创业板+1.5%</span>
+  </div>
+</header>
+<div class="wrap">
+
+<section>
+<details>
+  <summary>
+    <div class="sumrow">
+      <span class="arrow">▶</span>
+      <div>
+        <h2>📊 持仓基金盯盘</h2>
+        <div class="gist">今天账户有点分化——黄金继续狂欢、纳指和半导体承压回调，整体感受：喜忧参半</div>
+      </div>
+    </div>
+  </summary>
+  <div class="inner">
+    <table>
+      <tr><th>持仓</th><th>最新净值（日期）</th><th>日涨跌</th><th>跟踪标的最近表现</th></tr>
+      <tr><td>006479 广发纳斯达克100ETF联接(QDII)C</td><td data-fundnav="006479">—（8/11 待披露）</td><td class="flat" data-fundpct="006479">待更新</td><td data-fundref="006479">QDII 净值滞后。周一纳指100收 <span class="down">29,621.80（-0.34%）</span>，英伟达 -2.86%、苹果 -1.53%，科技股普跌；微软 +1.21% 独撑。下一期净值预计小幅回调。</td></tr>
+      <tr><td>000217 华安黄金ETF联接C</td><td data-fundnav="000217">—（8/11 待披露）</td><td class="flat" data-fundpct="000217">待更新</td><td data-fundref="000217">跟踪 Au99.99。今早现货金突破 <span class="up">4412 美元/盎司（+0.55%）</span>，建行纸黄金报 <span class="up">957.15 元/克（+1.26%）</span>，金价延续强势。</td></tr>
+      <tr><td>008702 华夏黄金ETF联接C</td><td data-fundnav="008702">—（8/11 待披露）</td><td class="flat" data-fundpct="008702">待更新</td><td data-fundref="008702">同上，跟踪 Au99.99。COMEX 黄金期货周一收 <span class="up">4448.6（+1.11%）</span>，瑞银喊出 5000 目标价。</td></tr>
+      <tr><td>008987 广发上海金ETF联接C</td><td data-fundnav="008987">—（8/11 待披露）</td><td class="flat" data-fundpct="008987">待更新</td><td data-fundref="008987">跟踪上海金（SHAU）。沪金主力合约夜盘收 <span class="up">950.38 元/克（+0.66%）</span>，Au99.99 早盘约 947 元/克。</td></tr>
+      <tr><td>积存金（银行）</td><td colspan="2" data-goldref="cunyijin">参考价约 <span class="up">952–957 元/克</span>（8/11 实时）</td><td data-fundref="cunyijin">建行纸黄金 957.15、工行纸黄金 956.75（均 +1.25% 左右）；银行投资金条约 1302–1308 元/克；足金回收参考价约 938 元/克。金价持续走强中。</td></tr>
+      <tr><td>021894 易方达中证半导体材料设备ETF联接C</td><td data-fundnav="021894">—（8/11 待披露）</td><td class="flat" data-fundpct="021894">待更新</td><td data-fundref="021894">跟踪中证半导体材料设备指数（931743），今早约 <span class="down">-0.5%</span>（10:40 数据）。个股分化：有研新材 <span class="up">+2.0%</span>、华海清科 <span class="up">+4%</span>，但先导基电 <span class="down">-1.5%</span>。隔夜 SOX <span class="down">-2.94%</span> 拖累情绪。</td></tr>
+      <tr><td>025500 东方阿尔法科技智选混合C</td><td data-fundnav="025500">—（8/11 待披露）</td><td class="flat" data-fundpct="025500">待更新</td><td data-fundref="025500">主动管理型科技主题基金。隔夜美股科技股分化（微软 +1.21% vs 英伟达 -2.86%），A 股今日商业航天/光模块调整、创新药活跃，具体净值需等晚间披露。</td></tr>
+    </table>
+    <div class="note">⚠️ 今日为周二，基金净值通常在当日 17:00–21:00 陆续披露，明晨早报将更新确切数值。隔夜/盘中数据仅供参考。</div>
+  </div>
+</details>
+</section>
+
+<section>
+<h2>📈 今日走势归因</h2>
+<div class="point"><b>① 美伊谈判反复 → 油价暴涨 + 加息预期回摆 → 股债分化</b><br>发生了什么：特朗普要求伊朗赔偿战争损失、称美军"100%控制霍尔木兹海峡"，伊朗随即开出 5 项重开条件（含归还冻结资产+永久停止军事行动），谈判前景骤然黯淡。<br>影响：<span class="up">WTI 原油 +5.05% 报 82.13 美元/桶</span>，布油 +4.99%；克利夫兰联储主席哈马克喊话"需要多次加息"，9 月加息概率从 44% 回升至 <span class="up">51.7%</span>。<br>传导逻辑：油价飙升重新点燃通胀担忧 → 美联储鹰派声音强化 → 美股承压（尤其高估值成长股）、但避险资产（黄金）反而受益于地缘不确定性。<br>来源：<a href="https://www.163.com/dy/article/L41R646G0550WHYR.html">财闻/网易</a> · <a href="https://www.toutiao.com/article/7672557450071671315/">头条财经</a></div>
+<div class="point"><b>② 费城半导体 -2.94% 全线走低 → 英特尔融资 + 光通信暴雷</b><br>发生了什么：SOX 周一跌 2.94%，30 只成分股无一上涨。英特尔宣布发行 150 亿美元股票筹资（用于先进封装/AI 芯片）股价 <span class="down">-4.06%</span>；光通信龙头 Coherent <span class="down">-14.24%</span>（Lumentum -8.61%）；英伟达 <span class="down">-2.86%</span>、ARM <span class="down">-5%</span>。<br>影响：直接压制 A 股半导体设备板块情绪，今早 931743 指数低开后弱势震荡。<br>传导逻辑：美股芯片链杀估值 → A 股映射标的跟跌（尤其是光通信/存储方向）；但材料设备端有国产替代政策对冲，分化明显。<br>来源：<a href="https://www.toutiao.com/article/7672533867202396718">大河财立方/头条</a> · <a href="https://www.163.com/dy/article/L41N7A8S05199NPP.html">21世纪经济报道/网易</a></div>
+<div class="point"><b>③ 黄金突破 4400 美元 → 央行购金 + 避险双重驱动</b><br>发生了什么：现货黄金盘中触及 <span class="up">4410+ 美元/盎司</span>，COMEX 期货收 4448.6（+1.11%）。瑞银上调目标价至 5000（2027 年），花旗预测 Q4 4500/Q1 5000。<br>影响：你的三只黄金基金 + 积存金持续受益，建行纸黄金今早已报 957 元/克。<br>传导逻辑：非农爆冷降息预期 + 地缘风险 + 中国央行连续 20 个月增持（Q2 净购 288.9 吨创历史新高）= 三重共振推升金价。本周关注周三 CPI 数据——若通胀超预期可能引发短期获利回吐。<br>来源：<a href="https://m.gelonghui.com/p/5993474">格隆汇</a> · <a href="https://k.sina.com.cn/article_5952915720_162d2490806704o23q.html">光大期货/新浪</a></div>
+<div class="point"><b>④ A 股低开回升 → 创新药/CRO 接棒主线，商业航天退潮</b><br>发生了什么：今早 A 股三大指数集体低开（沪指 -0.4%，超 3400 只下跌），随后创业板强势拉升至 <span class="up">+1.52%</span>。创新药/CRO 涨停潮（药明康德 +8.49%、百花医药 6 连板），贵金属/油气板块领涨；商业航天/半导体设备/光模块陷入调整。<br>影响：市场风格从"科技进攻"切换到"医药防守+资源品避险"，资金从高位题材流出。<br>传导逻辑：外围芯片大跌压制 A 股半导体情绪 → 资金轮动到低位医药和受益油价的能源板块。你的 021894（半导体材料设备）今天承受一定压力，但有研新材/华海清科等成分股仍逆势走强。<br>来源：<a href="https://new.qq.com/rain/a/20260811A03N9R00?refer=cp_1009">腾讯新闻</a> · <a href="https://stcn.com/article/detail/4068566.html">证券时报</a></div>
+</section>
+
+<section>
+<h2>📊 三大板块深度行情</h2>
+<div class="grid3">
+  <div class="card"><div class="k">纳斯达克100（NDX）</div><div class="v down">29,621.80 <span style="font-size:13px">-0.34%</span></div><div style="margin-top:6px;font-size:12.5px;color:#666;">纳斯达克综合：26,605.36（<span class="down">-0.32%</span>）<br>标普500：7,753.11（<span class="down">-0.06%</span>）<br>道琼斯：53,975.98（<span class="down">-0.11%</span>）</div></div>
+  <div class="card"><div class="k">现货黄金（XAU）</div><div class="v up">4,412.85 <span style="font-size:13px">$ / oz</span></div><div style="margin-top:6px;font-size:12.5px;color:#666;">日内 <span class="up">+0.55%</span>｜COMEX 4,448.6（<span class="up">+1.11%</span>）<br>Au99.99 ≈ 947 元/克（<span class="up">+0.25%</span>）<br>建行纸黄金 957.15（<span class="up">+1.26%</span>）</div></div>
+  <div class="card"><div class="k">美元指数（DXY）</div><div class="v up">99.81 <span style="font-size:13px">+0.27%</span></div><div style="margin-top:6px;font-size:12.5px;color:#666;">在岸人民币 6.7442<br>美元两个月低点附近筑底<br>本周 CPI/PPI 将指引方向</div></div>
+</div>
+<h3 style="margin-top:16px">🔴 纳斯达克 — 权重股表现（周一收盘）</h3>
+<table><tr><th>标的</th><th>收盘价</th><th>涨跌幅</th><th>备注</th></tr><tr><td>英伟达 NVDA</td><td>217.55</td><td class="down">-2.86%</td><td>向电力基建商 Lancium 投资 30 亿</td></tr><tr><td>苹果 AAPL</td><td>308.26</td><td class="down">-1.53%</td><td>盘后 -0.23%</td></tr><tr><td>微软 MSFT</td><td>506.06</td><td class="up">+1.21%</td><td>七巨头中唯一显著收红</td></tr><tr><td>费城半导体 SOX</td><td>—</td><td class="down">-2.94%</td><td>30 成分股全线下跌</td></tr></table>
+<h3>🟡 黄金 — 多品种一览</h3>
+<table><tr><th>品种</th><th>价格</th><th>涨跌</th></tr><tr><td>COMEX 黄金期货（12月）</td><td>$4,448.6 /oz</td><td class="up">+1.11%</td></tr><tr><td>伦敦金现货</td><td>$4,398.72 /oz</td><td class="up">+1.11%</td></tr><tr><td>上海 Au99.99</td><td>947.00 元/克</td><td class="up">+0.25%</td></tr><tr><td>沪金主力合约</td><td>950.38 元/克</td><td class="up">+0.66%</td></tr><tr><td>建行纸黄金（实时）</td><td>957.15 元/克</td><td class="up">+1.26%</td></tr></table>
+<h3>🔵 半导体 — A 股 vs 美股</h3>
+<table><tr><th>标的</th><th>价格/点位</th><th>涨跌幅</th><th>备注</th></tr><tr><td>申万半导体行业</td><td>13,775.03</td><td class="up">+1.09%</td><td>A 股半导体板块今日</td></tr><tr><td>中证半导体材料设备（931743）</td><td>—</td><td class="down">≈-0.5%</td><td>10:40 数据，下探回升</td></tr><tr><td>有研新材</td><td>53.07</td><td class="up">+2.00%</td><td>稀土/靶材，国产替代逻辑</td></tr><tr><td>中芯国际</td><td>127.50</td><td class="up">+0.99%</td><td>集成电路制造板块 +2%</td></tr><tr><td>北方华创</td><td>765.14</td><td class="up">+0.68%</td><td>设备龙头，外资唱多</td></tr><tr><td>先导基电</td><td>33.89</td><td class="down">-1.51%</td><td>隔夜 SOX 拖累</td></tr><tr><td>英特尔 INTC</td><td>—</td><td class="down">-4.06%</td><td>150 亿美元股票发行计划</td></tr><tr><td>ARM</td><td>—</td><td class="down">-5%+</td><td>芯片设计股承压</td></tr></table>
+</section>
+
+<section>
+<h2>📰 隔夜要闻摘要</h2>
+<div class="news-item"><div class="t">1. 金价突破 4400 美元，瑞银看涨至 5000</div><div class="s">现货黄金周一收涨 1.13% 逼近 4400 关口，今早亚市盘中突破 4410。驱动因素：① 非农爆冷后降息预期升温；② 美伊地缘风险再起；③ 全球央行持续购金（中国央行连续 20 个月增持，Q2 净购 288.9 吨创历史新高）。瑞银首席投资官喊出 2027 年上半年 5000 目标价，花旗预测今年 Q4 冲 4500。本周关注美国 CPI 数据——若超预期或引发获利回吐。</div><div class="src">来源：<a href="https://m.gelonghui.com/p/5993474">格隆汇</a> · <a href="https://www.toutiao.com/article/7672557450071671315/">头条财经</a></div></div>
+<div class="news-item"><div class="t">2. 特朗普索赔伊朗，霍尔木兹谈判蒙阴影，油价暴涨 5%</div><div class="s">特朗普 10 日称将要求伊朗就战争作出赔偿并纳入未来所有谈判议程，同时宣称美军"100%控制"霍尔木兹海峡。伊朗随即回应：重开海峡需满足 5 项条件（含永久停止军事行动+赔偿+归还冻结资产）。谈判前景骤然黯淡推动 WTI 原油大涨 5.05% 至 82.13 美元/桶，布油 +4.99% 至 87.72。油价飙升重新点燃通胀担忧，美联储 9 月加息概率回升至 51.7%。</div><div class="src">来源：<a href="https://www.163.com/dy/article/L41R646G0550WHYR.html">财闻/网易</a> · <a href="https://new.qq.com/rain/a/20260811A02DEO00?refer=cp_1009">腾讯新闻</a></div></div>
+<div class="news-item"><div class="t">3. 费城半导体暴跌近 3%，英特尔发股 150 亿、光通信 Coherent -14%</div><div class="s">SOX 周一跌 2.94%，30 只成分股全线走低。英特尔宣布拟发行 150 亿美元普通股（用于先进封装/AI 芯片资本支出），股价 -4.06%。光通信板块高开低走：Coherent -14.24%、Lumentum -8.61%、迈威尔科技 -4.65%。英伟达 -2.86%、ARM -5%+、高通 -3%+。摩根大通看好存储赛道（上调 2026-28 市场规模预测 4%-8%），但闪迪 +2% 与西部数据 -1% 分化明显。</div><div class="src">来源：<a href="https://www.toutiao.com/article/7672533867202396718">大河财立方/头条</a> · <a href="https://www.163.com/dy/article/L41N7A8S05199NPP.html">21世纪经济报道/网易</a></div></div>
+<div class="news-item"><div class="t">4. 克利夫兰联储主席："需要多次加息"才能制服通胀</div><div class="s">克利夫兰联储主席贝丝·哈马克表示，一次 25bp 的加息可能不够，"可能需要进行若干次加息"。此番鹰派表态推动 9 月加息概率从上周五的 44% 回升至 51.7%（CME FedWatch）。市场目光转向本周三 CPI 和周四 PPI——若数据强劲将进一步巩固加息预期，打压黄金和成长股；若疲软则相反。布朗兄弟哈里曼认为整体利空美元的风险更大。</div><div class="src">来源：<a href="https://www.163.com/dy/article/L41LMTIF05568W0A.html">新浪财经/汇通财经</a> · <a href="https://www.163.com/dy/article/L41R646G0550WHYR.html">财闻/网易</a></div></div>
+<div class="news-item"><div class="t">5. A 股今日：低开回升，创新药/CRO 接棒主线</div><div class="s">三大指数低开（沪指 -0.4%，超 3400 只下跌）后走势分化：创业板强势拉升收 +1.52%，沪指微跌 -0.11%。创新药/CRO 涨停潮（药明康德 +8.49%、百花医药 6 连板、毕得医药/百普赛斯 20% 涨停）；贵金属/油气板块受油价刺激领涨（湖南白银涨停、沪金 +2%+）；商业航天/半导体设备/光模块陷入调整（中国卫星逼近跌停、中际旭创 -6%）。韩国宣布设立 5 万亿韩元半导体专项基金，利好材料设备国产替代叙事。</div><div class="src">来源：<a href="https://new.qq.com/rain/a/20260811A03N9R00?refer=cp_1009">腾讯新闻</a> · <a href="https://xueqiu.com/5122903091/404519747">雪球</a> · <a href="https://stcn.com/article/detail/4068566.html">证券时报</a></div></div>
+</section>
+
+<section>
+<h2>💡 板块逻辑解读</h2>
+<h3>🔴 纳斯达克 / 科技股</h3>
+<ul class="logic">
+<li><b>驱动因素：</b>① 美伊局势推升油价→通胀担忧回摆→加息预期升温（9月 51.7%），高估值成长股首当其冲承压；② 芯片/光通信板块自身利空集中释放（英特尔巨额定增、Coherent 暴雷），拖累整个 SOX；③ 微软独涨 1.21% 显示资金仍在 AI 应用端寻找确定性。</li>
+<li><b>关键事件：</b>英特尔 150 亿美元融资（先进封装/AI 方向）、英伟达 Lancium 30 亿投资（AI 电力基建）、本周应用材料/思科财报。</li>
+<li><b>对持仓影响：</b>006479（纳指100联接）本期净值预计小幅回调（NDX -0.34%）。中长期 AI 算力需求逻辑未变，但短期波动加剧。025500（科技混合）取决于基金经理调仓方向——若偏应用端（微软系）则抗跌，若偏硬件则承压。</li>
+</ul>
+<h3>🟡 黄金</h3>
+<ul class="logic">
+<li><b>驱动因素：</b>三重共振——① 非农爆冷后宽松预期（9月加息概率仍低于 55%）；② 地缘风险溢价（美伊谈判僵局+霍尔木兹不确定性）；③ 央行购金潮（中国央行 Q2 大手笔增持 33 吨，全球央行 Q2 净购 288.9 吨创纪录）。技术面站上 4400 后上方空间打开。</li>
+<li><b>关键事件：</b>本周三美国 7 月 CPI（预期同比 +3.4%）是最大变量——若超预期→加息预期跳升→金价短线回调；若低于预期→进一步确认宽松转向→冲击 4500。瑞银/花旗目标价 5000 提供了中期锚定。</li>
+<li><b>对持仓影响：</b>000217/008702/008987 三只黄金基金 + 积存金均处于强势趋势中。注意：金价已半月反弹 8.5%，短线获利盘丰厚，CPI 公布前后波动可能加大。但中期逻辑（降息+地缘+央行购金）依然扎实。</li>
+</ul>
+<h3>🔵 半导体</h3>
+<ul class="logic">
+<li><b>驱动因素：</b>多空交织——空方：隔夜 SOX -2.94% 全线暴跌（英特尔/ARM/光通信利空），A 股光模块机构减仓（中际旭创 -6%、超大单净流出）；多方：韩国 5 万亿韩元半导体专项基金（利好材料/零部件国产替代叙事），高盛唱多中国半导体设备龙头，A 股材料设备端逆势走强（有研新材 +2%、华海清科 +4%）。</li>
+<li><b>关键事件：</b>① 韩国半导体专项基金落地进度；② 美国 CPI 对风险偏好影响；③ 中际旭创/新易盛等光模块股能否企稳（FCC 进口限制消息已被证伪，但机构减仓动作真实存在）。</li>
+<li><b>对持仓影响：</b>021894（半导体材料设备）短期承压（隔夜 SOX 拖累+931743 今早 -0.5%），但持仓恰好站在"多方"一侧——材料/设备受益于国产替代政策和韩国竞争催化。与存储/光通信方向的 ETF 相比，021894 的结构性优势仍然存在。关注本周能否在 SOX 利空消化后重新走强。</li>
+</ul>
+</section>
+
+<section id="liveSec" style="display:none;border:2px solid #f49cbb;">
+  <h2>📡 实时自动解读 <span style="font-size:12px;color:#a39aa9;font-weight:400">（打开开关后由实时行情自动生成，每 30 秒刷新）</span></h2>
+  <div id="liveInterpBody"></div>
+  <div class="note">⚠️ 本卡片为前端按实时数据规则生成的点评，不含隔夜新闻与深度逻辑；深度版请见上方「💡 板块逻辑解读」（每日早盘由自动化更新）。</div>
+</section>
+
+<footer>
+  ✨ 为 Rui 定制 · 数据来源：neodata / WebSearch（同花顺/新浪/格隆汇/证券时报/21世纪经济报道等） · 行情接口：腾讯 qt.gtimg.cn / 天天基金 pingzhongdata<br>
+  ⚠️ 以上内容仅为信息整理，不构成任何投资建议。市场有风险，决策需谨慎。
+</footer>
+</div><!-- end .wrap -->
+
+<script>
+(function(){
+  var SNAPSHOT_DATE = '2026-08-11（周二）';
+  var SNAPSHOT_SUB = '早报数据截至今晨 09:30';
+  var dateEl = document.getElementById('briefDate');
+  var subDateEl = document.getElementById('subDate');
+  var statusEl = document.getElementById('liveStatus');
+  var toggle = document.getElementById('liveToggle');
+  var liveSec = document.getElementById('liveSec');
+  var liveBody = document.getElementById('liveInterpBody');
+  var timer = null;
+  var lastUpdateTime = '';
+  var originals = {};
+  var S = { ndx:{}, ixic:{}, nvda:{}, aapl:{}, msft:{}, gc:{}, usdcny:{}, smh:{}, etf159558:{}, shGold:null, funds:{} };
+
+  function nowStr(){var d=new Date();return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);}
+  function num(s){var v=parseFloat(String(s).replace(/,/g,''));return isNaN(v)?0:v;}
+  function signClass(p){return num(p)>=0?'up':'down';}
+  function spct(p){if(p===null||p===undefined||p==='')return '—';return (parseFloat(p)>=0?'+':'')+p;}
+
+  function snapshotOriginals(){if(Object.keys(originals).length>0)return;document.querySelectorAll('[data-fundnav],[data-fundpct],[data-fundref],[data-goldref]').forEach(function(el){var k=el.getAttribute('data-fundnav')||el.getAttribute('data-fundpct')||el.getAttribute('data-fundref')||el.getAttribute('data-goldref');if(k)originals[k]=el.innerHTML;});}
+  function restoreOriginals(){Object.keys(originals).forEach(function(k){var el=document.querySelector('[data-fundnav="'+k+'"],[data-fundpct="'+k+'"],[data-fundref="'+k+'"],[data-goldref="'+k+'"]');if(el)el.innerHTML=originals[k];});}
+
+  function fetchAll(){
+    snapshotOriginals();
+    var codes=['sh000001','sz399001','sz399006','sh000688','usNDX','usIXIC','usNVDA','usAAPL','usMSFT','hf_GC','whUSDCNY','sz159558','usSMH'];
+    codes.forEach(function(code,i){setTimeout(function(){var s=document.createElement('script');s.src='https://qt.gtimg.cn/q='+code;s.charset='gbk';s.onload=function(){parseQt(window['v_'+code]);s.remove();};s.onerror=function(){s.remove();};document.head.appendChild(s);},i*50);});
+    ['006479','000217','008702','008987','021894','025500'].forEach(function(code,j){setTimeout(function(){var f=document.createElement('script');f.src='https://fund.eastmoney.com/pingzhongdata/'+code+'.js';f.onload=function(){parseFund(code);f.remove();};f.onerror=function(){f.remove();};document.head.appendChild(f);},j*250);});
+    fetchShanghaiGold();
+    lastUpdateTime=nowStr();statusEl.classList.add('on');statusEl.textContent='● 实时模式 · 更新于 '+lastUpdateTime+' · 每 30 秒自动刷新';subDateEl.textContent='📡 正在拉取实时行情…';liveSec.style.display='block';renderLive();
+  }
+  function markUpdated(){subDateEl.textContent='📡 实时已更新 · 每 30 秒自动刷新数字与解读';}
+  function parseQt(txt){
+    if(!txt)return;
+    txt.trim().split(';').forEach(function(r){
+      var f=r.split('~');if(f.length<3)return;
+      var price=String(f[3]||'').replace(/"/g,''),pct=String(f[32]||'').replace(/"/g,'');
+      if(!price)return;
+      var code=f[2]||'',p=num(price);
+      if(code==='sh000001')setCell('上证指数',price,pct);
+      else if(code==='usNDX'){S.ndx={p:price,pc:pct};setCell('纳斯达克100',price,pct);}
+      else if(code.indexOf('IXIC')>=0)S.ixic={p:price,pc:pct};
+      else if(code.indexOf('NVDA')>=0){S.nvda={p:price,pc:pct};setCell('英伟达',price,pct);}
+      else if(code.indexOf('AAPL')>=0){S.aapl={p:price,pc:pct};setCell('苹果',price,pct);}
+      else if(code.indexOf('MSFT')>=0){S.msft={p:price,pc:pct};setCell('微软',price,pct);}
+      else if(code==='hf_GC'){S.gc={p:price,pc:pct};setCell('COMEX黄金',price,pct);renderGoldRefs();}
+      else if(code==='whUSDCNY'){S.usdcny={p:price,pc:pct};renderGoldRefs();}
+      else if(code.indexOf('SMH')>=0){S.smh={p:price,pc:pct};setCell('SMH(SOX代理)',price,pct);}
+      else if(code.indexOf('159558')>=0){S.etf159558={p:price,pc:pct};setCell('159558',price,pct);}
+    });
+    renderLive();
+  }
+  function calcRmb(){var g=num(S.gc.p),u=num(S.usdcny.p)||7.15;if(!g)return 0;return g*u/31.1035;}
+  function parseFund(code){
+    try{var arr=window['Data_netWorthTrend'];
+    if(arr&&arr.length){var last=arr[arr.length-1],nv=last[1]?last[1].toFixed(4):'-',dt=last[0]?String(last[0]).substring(0,10):'';
+    S.funds[code]={nv:nv,dt:dt};
+    var navEl=document.querySelector('[data-fundnav="'+code+'"]');if(navEl)navEl.innerHTML=nv+'（'+dt+'）';markUpdated();}
+    }catch(e){}
+  }
+  function setFundRef(code,html){var el=document.querySelector('[data-fundref="'+code+'"]');if(el)el.innerHTML=html;}
+  function renderLive(){
+    if(S.ndx.p){var ndCls=signClass(S.ndx.pc);
+      setFundRef('006479','纳指100最新 <b>'+S.ndx.p+'</b>（<span class="'+ndCls+'">'+spct(S.ndx.pc)+'</span>）。英伟达 '+spct(S.nvda.pc)+'、苹果 '+spct(S.aapl.pc)+'、微软 '+spct(S.msft.pc)+'。下一期净值将跟随纳指100走势。');}
+    renderGoldRefs();
+    if(S.smh.p||S.etf159558.p){
+      var smhTxt=S.smh.pc?('隔夜费城半导体 SOX（SMH 代理）'+spct(S.smh.pc)):'';
+      var etfTxt=S.etf159558.pc?('；A 股半导体 ETF 159558 日内 '+spct(S.etf159558.pc)):'';
+      setFundRef('021894','跟踪中证半导体材料设备指数（931743）。'+smhTxt+etfTxt+'。个股分化，关注材料设备端国产替代。');
+    }
+    if(S.nvda.pc||S.msft.pc){
+      setFundRef('025500','主动管理型科技主题。隔夜美股科技股分化（微软 '+spct(S.msft.pc)+' vs 英伟达 '+spct(S.nvda.pc)+'），纳指100 '+spct(S.ndx.pc)+'。具体净值需等晚间披露。');
+    }
+    renderInterp();
+  }
+  function renderInterp(){
+    if(S.ndx.p||S.shGold||S.smh.p||S.etf159558.p)markUpdated();
+    var h='';
+    if(S.ndx.p){var p=num(S.ndx.pc);var tone=p>0.5?'走强':(p<-0.5?'承压':'窄幅震荡');
+      h+='<div class="point"><b>🔴 纳斯达克</b>：纳指100 最新 <b>'+S.ndx.p+'</b>（'+(p>=0?'+':'')+S.ndx.pc+'），科技权重'+tone+'。';
+      if(S.nvda.pc)h+='英伟达 '+spct(S.nvda.pc)+'、苹果 '+spct(S.aapl.pc)+'、微软 '+spct(S.msft.pc)+'。';
+      h+='对持仓 006479（纳指100联接）'+(p>=0?'偏利好':'偏压力')+'。</div>';}
+    if(S.shGold){var gp=num(S.shGold.pc);
+      h+='<div class="point"><b>🟡 黄金</b>：上海金（Au99.99）最新 <b>'+S.shGold.p.toFixed(2)+'</b> 元/克（'+(gp>=0?'+':'')+S.shGold.pc.toFixed(2)+'%），'+(gp>=0?'延续强势，三只黄金基金+积存金受益':'回落，注意短线波动')+'。</div>';}
+    if(S.smh.p||S.etf159558.p){var sp=num(S.smh.pc),ep=num(S.etf159558.pc);
+      h+='<div class="point"><b>🔵 半导体</b>：'+(S.smh.pc?('隔夜 SOX（SMH 代理）'+(sp>=0?'+':'')+S.smh.pc):'')+(S.etf159558.pc?('；A股半导体 ETF 159558 '+(ep>=0?'+':'')+S.etf159558.pc):'')+'。对持仓 021894（半导体材料设备）'+((sp<0||ep<0)?'短期承压，但材料设备端有国产替代对冲':'偏正面')+'。</div>';}
+    var arr=[];
+    if(S.ndx.pc)arr.push(['纳指',num(S.ndx.pc)]);
+    if(S.shGold&&S.shGold.pc)arr.push(['黄金',num(S.shGold.pc)]);
+    if(S.smh.pc)arr.push(['半导体',num(S.smh.pc)]);
+    if(arr.length){var pos=arr.filter(function(x){return x[1]>0;}).map(function(x){return x[0];});var neg=arr.filter(function(x){return x[1]<0;}).map(function(x){return x[0];});
+      h+='<div class="point" style="background:#f3f0fb"><b>📌 组合实时速览</b>：'+(pos.length?('走强：'+pos.join('、')):'')+(pos.length&&neg.length?'；':'')+(neg.length?('承压：'+neg.join('、')):'')+'。'+((pos.indexOf('黄金')>=0&&neg.indexOf('纳指')>=0)?'今日组合呈现「黄金抗跌、科技回调」的防御特征，黄金端贡献主要正收益。':(pos.length>neg.length?'整体偏强。':'整体偏弱，注意仓位。'))+'</div>';}
+    liveBody.innerHTML=h;
+  }
+  function setCell(name,price,pct){
+    var cells=document.querySelectorAll('td');
+    for(var i=0;i<cells.length;i++){if(cells[i].textContent.indexOf(name)>=0&&cells[i].parentNode){
+      var row=cells[i].parentNode;
+      if(row.querySelector('[data-fundnav],[data-fundref]'))continue;
+      var tds=row.querySelectorAll('td');
+      if(tds.length>=2){tds[1].innerHTML=tds[1].hasAttribute('data-fundnav')?(price+'<span style="font-size:11px;color:#aaa;margin-left:4px">实时</span>'):price;
+      if(pct&&tds.length>=3&&!tds[2].hasAttribute('data-fundpct')){var p=parseFloat(pct);tds[2].innerHTML=(p>=0?'<span class="up">':'<span class="down">')+(p>=0?'+':'')+pct+'</span>';}}
+      break;}}
+  }
+  function fetchShanghaiGold(){
+    var cbName='__shGoldCb'+Date.now()+Math.floor(Math.random()*1000);
+    var s=document.createElement('script');
+    s.src='https://push2.eastmoney.com/api/qt/stock/get?secid=118.AU9999&fields=f43,f170,f58&fltt=2&invt=2&ut=fa5fd1943c7b386f172d6893dbfba10b&cb='+cbName;
+    window[cbName]=function(d){
+      try{ if(d&&d.data&&d.data.f43){ S.shGold={p:parseFloat(d.data.f43), pc:parseFloat(d.data.f170)||0, name:d.data.f58||'Au99.99'}; renderGoldRefs(); } }
+      catch(e){}
+      s.remove(); try{delete window[cbName];}catch(e){}
+    };
+    s.onerror=function(){s.remove();try{delete window[cbName];}catch(e){}};
+    document.head.appendChild(s);
+  }
+  function renderGoldRefs(){
+    if(!S.shGold)return;
+    var p=S.shGold.p, pc=S.shGold.pc, gcls=signClass(pc);
+    var gcTxt=(S.gc&&S.gc.p)?('COMEX 黄金 <b>'+S.gc.p+'</b> 美元/盎司（<span class="'+signClass(S.gc.pc)+'">'+spct(S.gc.pc)+'</span>），'):'';
+    setFundRef('000217','跟踪 Au99.99（上海金）。上海金最新 <b>'+p.toFixed(2)+'</b> 元/克（<span class="'+gcls+'">'+spct(pc)+'</span>）。'+gcTxt+'金价延续强势。');
+    setFundRef('008702','跟踪 Au99.99（上海金）。'+gcTxt+'上海金最新 <b>'+p.toFixed(2)+'</b> 元/克（<span class="'+gcls+'">'+spct(pc)+'</span>）。瑞银看涨至 5000。');
+    setFundRef('008987','跟踪上海金（SHAU），与 Au99.99 联动。上海金最新 <b>'+p.toFixed(2)+'</b> 元/克（<span class="'+gcls+'">'+spct(pc)+'</span>）。');
+    setFundRef('cunyijin','参考价 ≈ <b>'+p.toFixed(2)+'</b> 元/克（实时，上海金 Au99.99）。建行纸黄金约 '+(p+8).toFixed(2)+' 元/克。');
+    renderInterp();
+  }
+  toggle.addEventListener('change',function(){
+    if(toggle.checked){fetchAll();timer=setInterval(fetchAll,30000);}
+    else{if(timer){clearInterval(timer);timer=null;}statusEl.classList.remove('on');
+    statusEl.textContent=lastUpdateTime?('○ 静态模式 · 数据定格于 '+lastUpdateTime):'○ 早报快照（未拉取过实时数据）';
+    subDateEl.textContent=lastUpdateTime?('📊 数据定格于 '+lastUpdateTime+' · 解读已恢复为本期早报'):SNAPSHOT_SUB;
+    liveSec.style.display='none';restoreOriginals();}
+  });
+})();
+</script>
+</body></html>
