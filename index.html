@@ -65,11 +65,11 @@
   <div class="hd-row">
     <div>
       <h1>✨ 每日早盘简报 · <span id="briefDate">2026-08-11（周二）</span><span class="cute">为 Rui 定制</span></h1>
-      <div class="sub"><span id="subDate">早报数据截至今晨 09:30</span> ｜ <span id="liveStatus" class="live-status">○ 早报模式快照</span> ｜ <span id="liveHint">打开右侧开关 → 实时刷新行情与解读文字</span></div>
+      <div class="sub"><span id="subDate">正在加载实时数据…</span> ｜ <span id="liveStatus" class="live-status">○ 启动中</span> ｜ <span id="liveHint">行情 / 要闻 / 走势归因均为实时</span></div>
     </div>
     <div class="live-ctl">
-      <span class="live-label">实时更新</span>
-      <label class="switch" title="打开后自动抓取最新行情">
+      <span class="live-label">自动刷新</span>
+      <label class="switch" title="页面打开即为实时数据；关掉只是暂停自动刷新，数据定格在最后一次">
         <input type="checkbox" id="liveToggle">
         <span class="slider"></span>
       </label>
@@ -203,7 +203,6 @@
   // └───────────────────────────────────────────────────────────┘
   var VIEW_PASS = '0622';
 
-  var SNAPSHOT_SUB = '早报数据截至今晨 09:30';
   var subDateEl  = document.getElementById('subDate');
   var statusEl   = document.getElementById('liveStatus');
   var toggle     = document.getElementById('liveToggle');
@@ -220,10 +219,7 @@
   // 本期早报正文（深度解读部分）是哪天写的——用于提醒正文与实时数据不同源
   var SNAPSHOT_DATE=(dateEl?dateEl.textContent:'').replace(/[（(].*$/,'').trim();
 
-  var timer=null, lastUpdateTime='', snapped=false;
-  var SEL='[data-fundnav],[data-fundpct],[data-fundref],[data-goldref],[data-card],[data-cardk],[data-cardsub],'+
-          '[data-qp],[data-qc],[data-qr],[data-qn],[data-h3],[data-th],'+
-          '#attrBody,#newsBody,#newsTitle,#briefDate,#tagRow,#liveHint,#fundGist';
+  var timer=null, lastUpdateTime='', gotAnyData=false;
   var S={funds:{}, news:[], newsRaw:[], newsSeen:{}, newsOvernight:[], newsIntraday:[],
          newsScanned:0, newsTime:'', newsDeepDone:false};
 
@@ -293,18 +289,6 @@
   function px(k,d){return has(k)?parseFloat(S[k].p).toFixed(d===undefined?2:d):'—';}
   function pc(k){return has(k)?pct(S[k].pc):'—';}
   function tone(v,hi,lo){var n=num(v);return n>hi?'走强':(n<lo?'承压':'窄幅震荡');}
-
-  function snapshotOriginals(){
-    if(snapped)return; snapped=true;
-    document.querySelectorAll(SEL).forEach(function(el){el.__orig=el.innerHTML;el.__origCls=el.className;});
-  }
-  function restoreOriginals(){
-    document.querySelectorAll(SEL).forEach(function(el){
-      if(el.__orig!==undefined){el.innerHTML=el.__orig;el.className=el.__origCls;}
-    });
-    if(attrBadge)attrBadge.textContent='';
-    if(newsBadge)newsBadge.textContent='';
-  }
 
   function loadJs(src,onload,charset,onerror){
     var s=document.createElement('script');
@@ -779,11 +763,11 @@
     if(has('ndx')||has('sh')||(S.shgold&&S.shgold.p))markUpdated();
   }
   function markUpdated(){
+    gotAnyData=true;
     subDateEl.textContent='📡 实时已更新 '+nowStr()+' · 行情/要闻/归因每 30 秒自动刷新';
   }
 
   function fetchAll(first){
-    snapshotOriginals();
     fetchQuotes();
     fetchEm('118.AU9999','shgold');
     fetchEm('100.UDI','dxy');
@@ -795,24 +779,39 @@
     else fetchNews(1,false);
     lastUpdateTime=nowStr();
     statusEl.classList.add('on');
-    statusEl.textContent='● 实时模式 · 更新于 '+lastUpdateTime+' · 每 30 秒自动刷新';
-    subDateEl.textContent='📡 正在拉取实时行情与要闻…';
+    statusEl.textContent='● 自动刷新中 · 更新于 '+lastUpdateTime;
+    if(!gotAnyData)subDateEl.textContent='📡 正在拉取实时行情与要闻…';
     liveSec.style.display='block';
   }
 
+  // 开关只控制"是否每 30 秒自动刷新"，关掉是暂停、把数据定格在最后一次，
+  // 不再回滚到 HTML 里那份写死的早报快照（那份快照没有任何东西会去更新它）。
   toggle.addEventListener('change',function(){
     if(toggle.checked){
-      fetchAll(true);
+      fetchAll(!gotAnyData);
       timer=setInterval(function(){fetchAll(false);},30000);
     }else{
       if(timer){clearInterval(timer);timer=null;}
       statusEl.classList.remove('on');
-      statusEl.textContent=lastUpdateTime?('○ 静态模式 · 数据定格于 '+lastUpdateTime):'○ 早报快照（未拉取过实时数据）';
-      subDateEl.textContent=lastUpdateTime?('📊 数据定格于 '+lastUpdateTime+' · 内容已恢复为本期早报'):SNAPSHOT_SUB;
-      liveSec.style.display='none';
-      restoreOriginals();
+      statusEl.textContent='⏸ 已暂停自动刷新 · 数据定格于 '+(lastUpdateTime||'—');
+      subDateEl.textContent='⏸ 已暂停 · 页面停留在 '+(lastUpdateTime||'—')+' 的数据，打开开关继续刷新';
     }
   });
+
+  // 页面一打开就自动拉取，避免先看到 HTML 里那份写死的旧数据
+  renderHeader();               // 日期先跳到今天，不等数据
+  toggle.checked=true;
+  fetchAll(true);
+  timer=setInterval(function(){fetchAll(false);},30000);
+
+  // 万一网络不通、一直拿不到数据，必须说清楚下面是旧存档，不能顶着今天的日期装作是今天的
+  setTimeout(function(){
+    if(gotAnyData)return;
+    if(attrBadge)attrBadge.innerHTML='<span style="color:#d4303a">⚠️ 实时数据获取失败，以下为 '+SNAPSHOT_DATE+' 存档内容</span>';
+    if(newsBadge)newsBadge.innerHTML='<span style="color:#d4303a">⚠️ 实时要闻获取失败，以下为 '+SNAPSHOT_DATE+' 存档内容</span>';
+    subDateEl.textContent='⚠️ 实时数据获取失败 · 正文为 '+SNAPSHOT_DATE+' 存档，请检查网络后刷新';
+    if(dateEl)dateEl.innerHTML=SNAPSHOT_DATE+' <span style="font-size:13px;font-weight:400;opacity:.9">· 存档</span>';
+  },12000);
 })();
 </script>
 </body></html>
