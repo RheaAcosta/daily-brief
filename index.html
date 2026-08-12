@@ -200,7 +200,7 @@
   // │ 持仓查看密码：改这一行就能换密码                          │
   // │ 注意：这是界面层遮挡，不是加密。会看网页源代码的人能绕过。│
   // └───────────────────────────────────────────────────────────┘
-  var VIEW_PASS = 'rui0409';
+  var VIEW_PASS = '0622';
 
   var SNAPSHOT_SUB = '早报数据截至今晨 09:30';
   var subDateEl  = document.getElementById('subDate');
@@ -240,14 +240,15 @@
     var lock=document.getElementById('holdLock'), body=document.getElementById('holdBody');
     if(lock)lock.style.display='none';
     if(body)body.style.display='';
-    if(remember){try{localStorage.setItem('briefUnlock','1');}catch(e){}}
+    // 存密码本身而不是通用标记：改了 VIEW_PASS 后，旧设备的"记住"会自动失效
+    if(remember){try{localStorage.setItem('briefUnlock',VIEW_PASS);}catch(e){}}
     renderAll();
   }
   (function initLock(){
     var btn=document.getElementById('holdBtn'), inp=document.getElementById('holdPass'),
         err=document.getElementById('holdErr'), rem=document.getElementById('holdRemember');
     var saved=null; try{saved=localStorage.getItem('briefUnlock');}catch(e){}
-    if(saved==='1'){applyUnlock(false);return;}
+    if(saved===VIEW_PASS){applyUnlock(false);return;}
     function tryUnlock(){
       if(!inp)return;
       if(inp.value===VIEW_PASS){applyUnlock(rem&&rem.checked);}
