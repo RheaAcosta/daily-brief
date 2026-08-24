@@ -363,13 +363,17 @@
     });
   }
 
-  // ---------- 基金净值：多源自动兜底（不同环境里，各家域名的连通性不一样，不能只赌一个域名） ----------
-  // 主源：天天基金"实时估值"接口（fundgz.1234567.com.cn，交易时段内持续更新，最贴近"盯盘"需求）
-  // 备源：东方财富官方历史净值接口（api.fund.eastmoney.com/f10/lsjz，和已验证能通的 push2.eastmoney.com 同属
-  //       eastmoney.com 域名家族，用于主源连不上时兜底，能拿到的是"最近一个已披露交易日"的官方净值）
-  // 两个源各给 5 秒；一个成功就不再等另一个；两个都失败才最终标红。
+  // ---------- 基金净值：pingzhongdata ----------
+  // 只有这一个源能用，别再换。实测（2026-08-24，从 github.io 页面发起）：
+  //   fundgz.1234567.com.cn/js/{code}.js        → 404，接口已下线
+  //   api.fund.eastmoney.com/f10/lsjz           → ErrCode:-999，按 Referer 白名单拒绝非东财来源，
+  //                                               不带 Referer 同样被拒，在本站无解
+  //   fund.eastmoney.com/pingzhongdata/{code}.js → 正常返回 Data_netWorthTrend
+  // 代价是单只 75KB~480KB、六只约 1.3MB，所以只在首次加载和每 30 分钟拉一次，
+  // 不跟着 30 秒的行情刷新走（净值一天只在 17:00-21:00 更新一次，没必要频繁拉）。
   var FUND_CODES=['006479','000217','008702','008987','021894','025500'];
   var fundGot={};
+  var fundLastFetch=0;
   function fillFundCell(code,nv,dt,chg,isEstimate){
     fundGot[code]=true;
     S.funds[code]={nv:nv.toFixed(4),dt:dt,chg:chg};
@@ -379,44 +383,33 @@
     if(pctEl&&chg!==null){pctEl.className=cls(chg);pctEl.innerHTML=pct(chg)+(isEstimate?' 估':'');}
     markUpdated();
   }
-  function fetchFundGz(code){
-    window.jsonpgz=function(d){
+  // pingzhongdata 把数据写在全局变量 Data_netWorthTrend 上，六只基金共用这一个名字，
+  // 所以必须串行加载：每只加载前先清空，onload 时立刻读走，避免互相覆盖。
+  function fetchFundPzd(code){
+    window['Data_netWorthTrend']=null;
+    loadJs('https://fund.eastmoney.com/pingzhongdata/'+code+'.js?_='+Date.now(),function(){
       try{
-        if(fundGot[code]||!d)return;
-        var gsz=(d.gsz!==undefined&&d.gsz!=='')?Number(d.gsz):null;
-        var dwjz=(d.dwjz!==undefined&&d.dwjz!=='')?Number(d.dwjz):null;
-        var chg=(d.gszzl!==undefined&&d.gszzl!=='')?Number(d.gszzl):null;
-        var nv=gsz!==null?gsz:dwjz;
-        if(nv===null)return;
-        fillFundCell(code,nv,d.gztime||d.jzrq||'',chg,gsz!==null);
+        // 结构：[{x:时间戳, y:单位净值, equityReturn:当日涨跌幅%}, ...]，最后一项是最新已披露
+        var arr=window['Data_netWorthTrend'];
+        if(!arr||!arr.length)return;
+        var last=arr[arr.length-1];
+        if(!last||last.y===undefined||last.y===null)return;
+        var d=new Date(last.x);
+        var dt=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+        var chg=(last.equityReturn===undefined||last.equityReturn===null)?null:Number(last.equityReturn);
+        fillFundCell(code,Number(last.y),dt,chg,false);
       }catch(e){}
-    };
-    loadJs('https://fundgz.1234567.com.cn/js/'+code+'.js?rt='+Date.now(),function(){},null,function(){});
+    },null,function(){});
   }
-  function fetchFundLsjz(code){
-    if(fundGot[code])return;
-    var cb='lsjzcb'+code+Math.floor(Math.random()*1e9);
-    var fin=false;
-    function finish(){if(fin)return;fin=true;try{delete window[cb];}catch(e){window[cb]=undefined;}}
-    window[cb]=function(d){
-      try{
-        if(fundGot[code]){finish();return;}
-        var row=d&&d.Data&&d.Data.LSJZList&&d.Data.LSJZList[0];
-        if(row&&row.DWJZ){
-          fillFundCell(code,Number(row.DWJZ),row.FSRQ||'',row.JZZZL?Number(row.JZZZL):null,false);
-        }
-      }catch(e){}
-      finish();
-    };
-    loadJs('https://api.fund.eastmoney.com/f10/lsjz?callback='+cb+'&fundCode='+code+
-           '&pageIndex=1&pageSize=1&_='+Date.now(),finish,null,finish);
-  }
-  function fetchFunds(){
+  function fetchFunds(force){
+    // 净值一天只更新一次，别跟着 30 秒行情刷新反复拉 1.3MB
+    var now=Date.now();
+    if(!force&&fundLastFetch&&now-fundLastFetch<30*60*1000)return;
+    fundLastFetch=now;
     FUND_CODES.forEach(function(code,j){
-      setTimeout(function(){fetchFundGz(code);},j*220);
-      setTimeout(function(){fetchFundLsjz(code);},5000+j*220);
+      setTimeout(function(){fetchFundPzd(code);},j*350);
     });
-    // 两个源都试过、12 秒后仍没数据的，明确标红，绝不让加载中/旧数据一直装作是最新的
+    // 全部试完仍没数据的明确标红，绝不让"加载中"一直挂着装作在努力
     setTimeout(function(){
       FUND_CODES.forEach(function(code){
         if(fundGot[code])return;
@@ -425,7 +418,7 @@
         var pctEl=document.querySelector('[data-fundpct="'+code+'"]');
         if(pctEl)pctEl.innerHTML='—';
       });
-    },12000);
+    },20000);
   }
 
   // ---------- 实时新闻：新浪财经 7×24 快讯（JSONP） ----------
@@ -814,7 +807,7 @@
     fetchEm('118.AU9999','shgold');
     fetchEm('100.UDI','dxy');
     fetchEm('2.931743','idx931743');
-    fetchFunds();
+    fetchFunds(first);
     // 首次打开：一路翻页回溯到隔夜，凑齐一篇早报的消息面
     // 之后每 30 秒：只拉最新一页做增量（靠 newsSeen 去重），不重复翻十几页
     if(first){S.newsRaw=[];S.newsSeen={};S.newsScanned=0;S.newsDeepDone=false;fetchNews(1,true);}
